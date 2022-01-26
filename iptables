@@ -1,0 +1,49 @@
+FIREWALL/REVERSE PROXY
+
+INPUT
+-----
+iptables --append INPUT --protocol tcp --dst 192.168.0.254 --dport 443 --ctstate NEW,ESTABLISHED --jump ACCEPT
+
+OUTPUT
+------
+iptables --append OUTPUT --protocol tcp --src 192.168.0.254 --dst 192.168.1.1 --dport 8443 --jump ACCEPT
+iptables --append OUTPUT --protocol tcp --src 192.168.0.254 --dst 192.168.1.2 --dport 8444 --jump ACCEPT
+
+
+AUTH API
+
+INPUT
+-----
+iptables --append INPUT --protocol tcp --src 192.168.0.254 --dst 192.168.1.1 --dport 8443 --jump ACCEPT
+
+OUTPUT
+------
+iptables --append OUTPUT --protocol tcp --src 192.168.2.1 --dst 192.168.2.2 --dport 6379 --jump ACCEPT
+
+
+RESOURCES API
+
+INPUT
+-----
+iptables --append INPUT --protocol tcp --src 192.168.0.254 --dst 192.168.1.2 --dport 8444 --jump ACCEPT
+
+OUTPUT
+------
+iptables --append OUTPUT --protocol tcp --src 192.168.3.1 --dst 192.168.3.2 --dport 27017 --jump ACCEPT
+iptables --append OUTPUT --protocol tcp --src 192.168.3.1 --dst 192.168.3.2 --dport 22 --jump ACCEPT
+
+
+AUTH SERVER
+
+INPUT
+-----
+iptables --append INPUT --protocol tcp --src 192.168.2.1 --dst 192.168.2.2 --dport 6379 --jump ACCEPT
+
+
+RESOURCES SERVER
+
+INPUT
+-----
+iptables --append INPUT --protocol tcp --src 192.168.3.1 --dst 192.168.3.2 --dport 27017 --jump ACCEPT
+iptables --append INPUT --protocol tcp --src 192.168.3.1 --dst 192.168.3.2 --dport 22 --jump ACCEPT
+iptables --append INPUT --protocol tcp --src 192.168.4.2 --dst 192.168.4.1 --dport 22 --jump ACCEPT
